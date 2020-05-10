@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Telegram Bot MFA</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Главная страница</h5>
+
+                    <div class="mt-3">
+                        <span>Здравствуйте, <b sec:authentication="principal.user.name"></b>!</span><br>
+                        <span>Ваш логин: <b sec:authentication="principal.user.username"></b>.</span>
+                    </div>
+
+                    <form th:action="@{/logout}" method="post" class="mt-3">
+                        <button class="btn btn-secondary" type="submit">Выйти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

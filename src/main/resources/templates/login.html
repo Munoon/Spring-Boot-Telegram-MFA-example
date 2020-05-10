@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <div class="alert alert-danger" role="alert" th:if="${param.error}">Неправильный логин или пароль</div>
+                    <div class="alert alert-success" role="alert" th:if="${param.logout}">Вы успешно вышли из аккаунта!</div>
+
+                    <h5 class="card-title text-center">Войти</h5>
+                    <form class="form-signin" th:action="@{/login}" method="post">
+                        <div class="form-label-group">
+                            <input type="text" id="inputUsername" class="form-control" placeholder="Логин" name="username">
+                            <label for="inputUsername">Логин</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password">
+                            <label for="inputPassword">Пароль</label>
+                        </div>
+
+<!--                        <div class="custom-control custom-checkbox mb-3">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="customCheck1">-->
+<!--                            <label class="custom-control-label" for="customCheck1">Запомнить меня</label>-->
+<!--                        </div>-->
+
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Войти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
