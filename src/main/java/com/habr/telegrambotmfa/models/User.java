@@ -1,6 +1,6 @@
 package com.habr.telegrambotmfa.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -10,8 +10,10 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
     @Id
+    @SequenceGenerator(name = "users_seq", sequenceName = "users_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
     @Column(name = "id", nullable = false)
-    private String id;
+    private Integer id;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -19,7 +21,7 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -41,11 +43,11 @@ public class User {
     public User() {
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -79,5 +81,15 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", roles=" + roles +
+                ", name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                '}';
     }
 }

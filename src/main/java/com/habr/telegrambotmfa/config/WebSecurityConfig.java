@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/login").anonymous()
+                .antMatchers("/login", "/ajax/user/register").anonymous()
                 .antMatchers("/resource/**", "/webjars/**").permitAll()
                 .and()
                 .authorizeRequests()
@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/static/**", "/webjars/**");
+        web.ignoring().antMatchers("/static/**", "/webjars/**", "/ajax/user/register");
     }
 
     @Override

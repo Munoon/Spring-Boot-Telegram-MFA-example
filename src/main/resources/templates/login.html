@@ -6,6 +6,10 @@
 
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/static/style.css}"/>
+
+    <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}" defer></script>
+    <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}" defer></script>
+    <script th:src="@{/static/login.js}" defer></script>
 </head>
 <body>
 <div class="container">
@@ -13,28 +17,53 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
                 <div class="card-body">
-                    <div class="alert alert-danger" role="alert" th:if="${param.error}">Неправильный логин или пароль</div>
-                    <div class="alert alert-success" role="alert" th:if="${param.logout}">Вы успешно вышли из аккаунта!</div>
+                    <div id="alertDiv">
+                        <div class="alert alert-danger" role="alert" th:if="${param.error}">Неправильный логин или пароль</div>
+                        <div class="alert alert-success" role="alert" th:if="${param.logout}">Вы успешно вышли из аккаунта!</div>
+                    </div>
 
-                    <h5 class="card-title text-center">Войти</h5>
-                    <form class="form-signin" th:action="@{/login}" method="post">
-                        <div class="form-label-group">
-                            <input type="text" id="inputUsername" class="form-control" placeholder="Логин" name="username">
-                            <label for="inputUsername">Логин</label>
+                    <div class="carousel slide" id="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <h5 class="card-title text-center">Войти</h5>
+                                <form class="form-signin" th:action="@{/login}" method="post" id="loginForm">
+                                    <div class="form-label-group">
+                                        <input type="text" id="inputUsername" class="form-control" placeholder="Логин" name="username">
+                                        <label for="inputUsername">Логин</label>
+                                    </div>
+
+                                    <div class="form-label-group">
+                                        <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password">
+                                        <label for="inputPassword">Пароль</label>
+                                    </div>
+
+                                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Войти</button>
+                                    <button class="btn btn-lg btn-secondary btn-block text-uppercase" id="openRegisterButton">Зарегестрироваться</button>
+                                </form>
+                            </div>
+                            <div class="carousel-item">
+                                <h5 class="card-title text-center">Зарегестрироваться</h5>
+                                <form class="form-signin" id="registerForm">
+                                    <div class="form-label-group">
+                                        <input type="text" id="registerNameInput" class="form-control" placeholder="Логин" name="name">
+                                        <label for="registerNameInput">Имя</label>
+                                    </div>
+
+                                    <div class="form-label-group">
+                                        <input type="text" id="registerUsernameInput" class="form-control" placeholder="Логин" name="username">
+                                        <label for="registerUsernameInput">Логин</label>
+                                    </div>
+
+                                    <div class="form-label-group">
+                                        <input type="password" id="registerPasswordInput" class="form-control" placeholder="Пароль" name="password">
+                                        <label for="registerPasswordInput">Пароль</label>
+                                    </div>
+
+                                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Зарегестрироваться</button>
+                                </form>
+                            </div>
                         </div>
-
-                        <div class="form-label-group">
-                            <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" name="password">
-                            <label for="inputPassword">Пароль</label>
-                        </div>
-
-<!--                        <div class="custom-control custom-checkbox mb-3">-->
-<!--                            <input type="checkbox" class="custom-control-input" id="customCheck1">-->
-<!--                            <label class="custom-control-label" for="customCheck1">Запомнить меня</label>-->
-<!--                        </div>-->
-
-                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Войти</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
