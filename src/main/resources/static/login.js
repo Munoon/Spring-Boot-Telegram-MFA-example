@@ -9,9 +9,18 @@ const LOGIN_SLIDE = 0,
 document.addEventListener('DOMContentLoaded', () => {
     $(carousel).carousel('pause');
 
-    openRegisterButton.addEventListener('click', e => {
+    loginForm.addEventListener('submit', e => {
         e.preventDefault();
-        $(carousel).carousel(REGISTER_SLIDE);
+
+        $.ajax({
+            method: 'POST',
+            url: '/login',
+            data: $(loginForm).serialize(),
+            error: response => {
+                showAlert(response.responseJSON.errorMessage, 'danger');
+                loginForm.querySelector('input[name="password"]').value = '';
+            }
+        }).done(response => location.href = response.redirectUrl);
     });
 
     registerForm.addEventListener('submit', e => {
@@ -32,6 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert('Вы успешно зарегестрировались', 'success');
             $(carousel).carousel(LOGIN_SLIDE);
         });
+    });
+
+    openRegisterButton.addEventListener('click', e => {
+        e.preventDefault();
+        $(carousel).carousel(REGISTER_SLIDE);
     });
 });
 

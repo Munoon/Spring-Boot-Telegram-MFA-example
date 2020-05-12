@@ -1,5 +1,8 @@
 package com.habr.telegrambotmfa.config;
 
+import com.habr.telegrambotmfa.login.CustomAuthenticationProvider;
+import com.habr.telegrambotmfa.login.CustomFailureHandler;
+import com.habr.telegrambotmfa.login.CustomSuccessHandler;
 import com.habr.telegrambotmfa.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.savedrequest.RequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -25,19 +29,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/ajax/user/register").anonymous()
-                .antMatchers("/resource/**", "/webjars/**").permitAll()
-                .and()
-                .authorizeRequests()
+                .antMatchers("/login").anonymous()
+                .antMatchers("/webjars/**", "/resource/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .formLogin()
+                .failureHandler(authenticationFailureHandler())
+                .successHandler(authenticationSuccessHandler())
                 .loginPage("/login")
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout");
+
+        RequestCache requestCache = http.getSharedObject(RequestCache.class);
+        if (requestCache != null) {
+            authenticationSuccessHandler().setRequestCache(requestCache);
+        }
     }
 
     @Override
@@ -47,7 +57,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(customAuthenticationProvider());
+    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        var provider = new CustomAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public CustomSuccessHandler authenticationSuccessHandler() {
+        return new CustomSuccessHandler();
+    }
+
+    @Bean
+    public CustomFailureHandler authenticationFailureHandler() {
+        return new CustomFailureHandler();
     }
 
     @Bean
