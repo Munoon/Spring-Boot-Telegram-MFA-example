@@ -1,7 +1,8 @@
 package com.habr.telegrambotmfa;
 
 import com.habr.telegrambotmfa.botCommands.ConnectAccountCommand;
-import org.springframework.beans.factory.BeanFactory;
+import com.habr.telegrambotmfa.botCommands.MfaCommand;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
@@ -14,23 +15,27 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 public class TelegramBot extends TelegramLongPollingCommandBot {
+    private MfaCommand mfaCommand;
     private String botUsername;
     private String botToken;
 
-    public TelegramBot(Environment env, BeanFactory beanFactory) throws TelegramApiException {
+    public TelegramBot(Environment env, ConnectAccountCommand connectAccountCommand, @Lazy MfaCommand mfaCommand) throws TelegramApiException {
         super(ApiContext.getInstance(DefaultBotOptions.class), false);
         this.botToken = env.getRequiredProperty("telegram.bot.token");
+        this.mfaCommand = mfaCommand;
         this.botUsername = getMe().getUserName();
 
         TelegramBotsApi botsApi = new TelegramBotsApi();
         botsApi.registerBot(this);
 
-        register(beanFactory.getBean(ConnectAccountCommand.class));
+        register(connectAccountCommand);
     }
 
     @Override
     public void processNonCommandUpdate(Update update) {
-
+        if (update.hasCallbackQuery()) {
+            mfaCommand.onCallbackQuery(update);
+        }
     }
 
     public String getUsernameByTelegramChatId(long telegramChatId) throws TelegramApiException {

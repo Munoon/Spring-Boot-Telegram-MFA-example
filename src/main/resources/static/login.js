@@ -3,11 +3,14 @@ const registerForm = document.getElementById('registerForm');
 const carousel = document.getElementById('carousel');
 const alertDiv = document.getElementById('alertDiv');
 const loginForm = document.getElementById('loginForm');
+const registerBackButton = document.getElementById('registerBackButton');
 const LOGIN_SLIDE = 0,
-    REGISTER_SLIDE = 1;
+    REGISTER_SLIDE = 1,
+    TELEGRAM_SLIDE = 2;
 
 document.addEventListener('DOMContentLoaded', () => {
     $(carousel).carousel('pause');
+    $(carousel).on('slide.bs.carousel', () => alertDiv.innerHTML = '');
 
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
@@ -17,8 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
             url: '/login',
             data: $(loginForm).serialize(),
             error: response => {
-                showAlert(response.responseJSON.errorMessage, 'danger');
-                loginForm.querySelector('input[name="password"]').value = '';
+                let data = response.responseJSON;
+                if (data.requiredMfas && data.requiredMfas.includes('TELEGRAM_MFA')) {
+                    $(carousel).carousel(TELEGRAM_SLIDE);
+                } else {
+                    showAlert(data.errorMessage, 'danger');
+                    loginForm.querySelector('input[name="password"]').value = '';
+                }
             }
         }).done(response => location.href = response.redirectUrl);
     });
@@ -46,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     openRegisterButton.addEventListener('click', e => {
         e.preventDefault();
         $(carousel).carousel(REGISTER_SLIDE);
+    });
+
+    registerBackButton.addEventListener('click', e => {
+        e.preventDefault();
+        $(carousel).carousel(LOGIN_SLIDE);
     });
 });
 

@@ -1,6 +1,8 @@
 package com.habr.telegrambotmfa.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.CharEncoding;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -25,6 +27,8 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         SavedRequest cache = requestCache.getRequest(request, response);
         info.setRedirectUrl(cache == null ? "/" : cache.getRedirectUrl());
 
+        response.setCharacterEncoding(CharEncoding.UTF_8);
+        response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), info);
     }

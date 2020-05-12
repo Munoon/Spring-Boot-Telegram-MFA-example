@@ -1,8 +1,10 @@
 package com.habr.telegrambotmfa.config;
 
+import com.habr.telegrambotmfa.botCommands.MfaCommand;
 import com.habr.telegrambotmfa.login.CustomAuthenticationProvider;
 import com.habr.telegrambotmfa.login.CustomFailureHandler;
 import com.habr.telegrambotmfa.login.CustomSuccessHandler;
+import com.habr.telegrambotmfa.login.CustomWebAuthenticationDetails;
 import com.habr.telegrambotmfa.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +22,12 @@ import org.springframework.security.web.savedrequest.RequestCache;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
+    private MfaCommand mfaCommand;
 
     @Autowired
-    public WebSecurityConfig(UserService userService) {
+    public WebSecurityConfig(UserService userService, MfaCommand mfaCommand) {
         this.userService = userService;
+        this.mfaCommand = mfaCommand;
     }
 
     @Override
@@ -36,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**").authenticated()
                 .and()
                 .formLogin()
+                .authenticationDetailsSource(CustomWebAuthenticationDetails::new)
                 .failureHandler(authenticationFailureHandler())
                 .successHandler(authenticationSuccessHandler())
                 .loginPage("/login")
@@ -62,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
-        var provider = new CustomAuthenticationProvider();
+        var provider = new CustomAuthenticationProvider(mfaCommand);
         provider.setUserDetailsService(userService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;

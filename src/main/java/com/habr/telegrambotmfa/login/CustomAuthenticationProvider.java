@@ -1,21 +1,37 @@
 package com.habr.telegrambotmfa.login;
 
-import org.springframework.security.authentication.BadCredentialsException;
+import com.habr.telegrambotmfa.AuthorizedUser;
+import com.habr.telegrambotmfa.botCommands.MfaCommand;
+import com.habr.telegrambotmfa.models.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.servlet.http.HttpSession;
+
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
-    @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-//        throw new BadCredentialsException("Telegram MFA not confirmed!");
+    private MfaCommand mfaCommand;
+
+    public CustomAuthenticationProvider(MfaCommand mfaCommand) {
+        this.mfaCommand = mfaCommand;
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        return super.authenticate(authentication);
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        HttpSession httpSession = ((CustomWebAuthenticationDetails) authentication.getDetails()).getHttpSession();
+        AuthorizedUser authUser = (AuthorizedUser) getUserDetailsService().loadUserByUsername((String) authentication.getPrincipal());
+        User user = authUser.getUser();
+
+        if (user.getTelegramChatId() != null) {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities());
+            mfaCommand.requireMfa(authenticationToken, SecurityContextHolder.getContext(), httpSession);
+            throw new RequireTelegramMfaException("Пожалуйста, подтвердите вход в Telegram!");
+        }
+
+        super.additionalAuthenticationChecks(userDetails, authentication);
     }
 
     @Override
