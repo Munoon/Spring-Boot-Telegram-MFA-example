@@ -25,6 +25,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "telegram_chat_id")
+    private Long telegramChatId;
+
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
@@ -81,6 +84,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getTelegramChatId() {
+        return telegramChatId;
+    }
+
+    public void setTelegramChatId(Long telegramChatId) {
+        this.telegramChatId = telegramChatId;
     }
 
     @Override

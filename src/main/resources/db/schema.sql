@@ -6,11 +6,13 @@ create sequence users_seq;
 
 CREATE TABLE users
 (
-    id               BIGINT DEFAULT users_seq.nextval PRIMARY KEY,
-    name             VARCHAR(255)            NOT NULL,
-    username         VARCHAR(255)            NOT NULL,
-    password         VARCHAR(255)            NOT NULL,
-    UNIQUE (username)
+    id                      BIGINT DEFAULT users_seq.nextval PRIMARY KEY,
+    name                    VARCHAR(255)            NOT NULL,
+    username                VARCHAR(255)            NOT NULL,
+    password                VARCHAR(255)            NOT NULL,
+    telegram_chat_id        BIGINT,
+    UNIQUE (username),
+    UNIQUE (telegram_chat_id)
 );
 
 CREATE TABLE users_roles

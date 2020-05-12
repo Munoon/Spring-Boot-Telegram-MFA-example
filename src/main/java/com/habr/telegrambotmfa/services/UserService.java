@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.NotFoundException;
+
 @Service
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
@@ -22,10 +24,19 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public void connectBot(String username, Long chatId) {
+        userRepository.connectBot(username, chatId);
+    }
+
     public User create(User user) {
         user.setId(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    public User getById(int id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
     }
 
     @Override

@@ -17,7 +17,8 @@
 
                     <div class="mt-3">
                         <span>Здравствуйте, <b sec:authentication="principal.user.name"></b>!</span><br>
-                        <span>Ваш логин: <b sec:authentication="principal.user.username"></b>.</span>
+                        <span>Ваш логин: <b sec:authentication="principal.user.username"></b>.</span><br>
+                        <span th:if="${useTelegram}">Ваш телеграм аккаунт: <b>@[[${telegram}]]</b>.</span>
                     </div>
 
                     <form th:action="@{/logout}" method="post" class="mt-3">
