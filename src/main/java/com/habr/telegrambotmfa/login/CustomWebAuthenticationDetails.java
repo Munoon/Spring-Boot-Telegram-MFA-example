@@ -3,17 +3,16 @@ package com.habr.telegrambotmfa.login;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
-    private final HttpSession httpSession;
+    private final HttpServletRequest request;
 
     public CustomWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
-        this.httpSession = request.getSession(true);
+        this.request = request;
     }
 
-    public HttpSession getHttpSession() {
-        return httpSession;
+    public HttpServletRequest getRequest() {
+        return request;
     }
 }

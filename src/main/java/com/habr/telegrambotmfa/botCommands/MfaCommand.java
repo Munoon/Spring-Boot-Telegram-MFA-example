@@ -2,10 +2,14 @@ package com.habr.telegrambotmfa.botCommands;
 
 import com.habr.telegrambotmfa.AuthorizedUser;
 import com.habr.telegrambotmfa.TelegramBot;
+import com.habr.telegrambotmfa.login.AuthenticationInfo;
+import com.habr.telegrambotmfa.login.CustomSuccessHandler;
 import com.habr.telegrambotmfa.models.User;
+import com.habr.telegrambotmfa.services.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
@@ -18,6 +22,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,16 +37,23 @@ public class MfaCommand {
     private static final String CONFIRM_BUTTON = "confirm";
     private Map<Long, AuthInfo> connectingUser = new HashMap<>();
     private TelegramBot telegramBot;
+    private WebSocketService webSocketService;
+    private CustomSuccessHandler customSuccessHandler;
 
     @Autowired
-    public MfaCommand(TelegramBot telegramBot) {
+    public MfaCommand(TelegramBot telegramBot, WebSocketService webSocketService, @Lazy CustomSuccessHandler customSuccessHandler) {
         this.telegramBot = telegramBot;
+        this.webSocketService = webSocketService;
+        this.customSuccessHandler = customSuccessHandler;
     }
 
-    public void requireMfa(Authentication authentication, SecurityContext context, HttpSession session) {
+    public void requireMfa(Authentication authentication, SecurityContext context, HttpServletRequest request) {
         User user = ((AuthorizedUser) authentication.getPrincipal()).getUser();
 
-        AuthInfo authInfo = new AuthInfo(authentication, context, session);
+        String csrfToken = request.getParameter("_csrf");
+        HttpSession session = request.getSession(true);
+        String redirectUrl = customSuccessHandler.getRedirectUrl(request, null);
+        AuthInfo authInfo = new AuthInfo(authentication, context, session, csrfToken, redirectUrl);
         connectingUser.put(user.getTelegramChatId(), authInfo);
 
         sendUserMessage(user);
@@ -56,15 +68,23 @@ public class MfaCommand {
                 .setChatId(message.getChatId())
                 .setMessageId(message.getMessageId());
 
+        AuthenticationInfo info = new AuthenticationInfo();
+
         if (callbackQuery.getData().equals(CONFIRM_BUTTON)) {
             Authentication authentication = authInfo.getAuthentication();
             authInfo.getSecurityContext().setAuthentication(authentication);
             authInfo.getSession().setAttribute(SPRING_SECURITY_CONTEXT_KEY, authInfo.getSecurityContext());
 
             editMessageText.setText("Вы успешно подтвердили вход!");
+            info.setSuccess(true);
+            info.setRedirectUrl(authInfo.getRedirectUrl());
         } else {
             editMessageText.setText("Вы успешно отклонили вход!");
+            info.setSuccess(false);
+            info.setErrorMessage("Вы отклонили вход в Telegram");
         }
+
+        webSocketService.sendLoginStatus(info, authInfo.getCsrf());
 
         try {
             telegramBot.execute(editMessageText);
@@ -103,11 +123,15 @@ public class MfaCommand {
         private final Authentication authentication;
         private final SecurityContext securityContext;
         private final HttpSession session;
+        private final String csrf;
+        private final String redirectUrl;
 
-        public AuthInfo(Authentication authentication, SecurityContext securityContext, HttpSession session) {
+        public AuthInfo(Authentication authentication, SecurityContext securityContext, HttpSession session, String csrf, String redirectUrl) {
             this.authentication = authentication;
             this.securityContext = securityContext;
             this.session = session;
+            this.csrf = csrf;
+            this.redirectUrl = redirectUrl;
         }
 
         public Authentication getAuthentication() {
@@ -120,6 +144,14 @@ public class MfaCommand {
 
         public HttpSession getSession() {
             return session;
+        }
+
+        public String getCsrf() {
+            return csrf;
+        }
+
+        public String getRedirectUrl() {
+            return redirectUrl;
         }
     }
 }

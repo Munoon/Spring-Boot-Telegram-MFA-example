@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     private MfaCommand mfaCommand;
@@ -20,14 +20,14 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        HttpSession httpSession = ((CustomWebAuthenticationDetails) authentication.getDetails()).getHttpSession();
+        HttpServletRequest request = ((CustomWebAuthenticationDetails) authentication.getDetails()).getRequest();
         AuthorizedUser authUser = (AuthorizedUser) getUserDetailsService().loadUserByUsername((String) authentication.getPrincipal());
         User user = authUser.getUser();
 
         if (user.getTelegramChatId() != null) {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(authUser, null, authUser.getAuthorities());
-            mfaCommand.requireMfa(authenticationToken, SecurityContextHolder.getContext(), httpSession);
+            mfaCommand.requireMfa(authenticationToken, SecurityContextHolder.getContext(), request);
             throw new RequireTelegramMfaException("Пожалуйста, подтвердите вход в Telegram!");
         }
 

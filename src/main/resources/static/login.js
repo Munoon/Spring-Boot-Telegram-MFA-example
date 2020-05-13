@@ -12,6 +12,29 @@ document.addEventListener('DOMContentLoaded', () => {
     $(carousel).carousel('pause');
     $(carousel).on('slide.bs.carousel', () => alertDiv.innerHTML = '');
 
+    let socket = new SockJS('/websocket');
+    let stompClient = Stomp.over(socket);
+
+    let headers = {};
+    let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+    headers[csrfHeader] = document.querySelector('meta[name="_csrf"]').content;
+
+    stompClient.connect(headers, frame => {
+        console.log(frame);
+
+        stompClient.subscribe('/user/queue/login', data => {
+            let info = JSON.parse(data.body);
+
+            if (info.success) {
+                location.href = info.redirectUrl;
+            } else {
+                loginForm.querySelector('input[name="password"]').value = '';
+                $(carousel).carousel(LOGIN_SLIDE);
+                showAlert(info.errorMessage, 'danger');
+            }
+        });
+    });
+
     loginForm.addEventListener('submit', e => {
         e.preventDefault();
 

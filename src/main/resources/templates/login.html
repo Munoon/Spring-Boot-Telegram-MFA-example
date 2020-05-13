@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <title>Вход</title>
 
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/static/style.css}"/>
 
     <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}" defer></script>
     <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}" defer></script>
+    <script th:src="@{/webjars/sockjs-client/1.0.2/sockjs.min.js}" defer></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}" defer></script>
     <script th:src="@{/static/login.js}" defer></script>
 </head>
 <body>
