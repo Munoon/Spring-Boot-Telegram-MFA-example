@@ -18,7 +18,21 @@
                     <div class="mt-3">
                         <span>Здравствуйте, <b sec:authentication="principal.user.name"></b>!</span><br>
                         <span>Ваш логин: <b sec:authentication="principal.user.username"></b>.</span><br>
-                        <span th:if="${useTelegram}">Ваш телеграм аккаунт: <b>@[[${telegram}]]</b>.</span>
+                        <span th:if="${useTelegram && telegram != null}">Ваш телеграм аккаунт: <b>@[[${telegram}]]</b>.</span>
+                        <span th:if="${useTelegram && telegram == null}">Ваш телеграм аккаунт <b>подключён</b>.</span>
+                    </div>
+
+                    <div class="mt-3" th:if="${!useTelegram}" th:with="botName = ${@telegramBot.getBotUsername()}">
+                        <hr>
+                        <span>
+                            Для подключения Telegram аккауета откройте бота
+                            <a th:href="${'https://t.me/' + botName}">@[[${botName}]]</a>,
+                            запустите его командой <b>/start</b> и введите команду
+                            <b>/connect [[${#authentication.principal.user.username}]]</b>.
+                            Затем обновите эту страницу, что бы убедиться, что вы подключили бота.
+                            Вы должны увидеть свой ник в Telegram или сообщение о том, что ваш Telegram аккаунт подключен.
+                        </span>
+                        <hr>
                     </div>
 
                     <form th:action="@{/logout}" method="post" class="mt-3">
