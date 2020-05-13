@@ -169,6 +169,12 @@ body {
        }
 }
 
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Fallback for Edge
 -------------------------------------------------- */
 

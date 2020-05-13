@@ -4,10 +4,15 @@ const carousel = document.getElementById('carousel');
 const alertDiv = document.getElementById('alertDiv');
 const loginForm = document.getElementById('loginForm');
 const registerBackButton = document.getElementById('registerBackButton');
+const telegramBackButton = document.getElementById('telegramBackButton');
 const loginModal = document.getElementById('loginModal');
 const LOGIN_SLIDE = 0,
     REGISTER_SLIDE = 1,
     TELEGRAM_SLIDE = 2;
+const backButton = e => {
+    e.preventDefault();
+    $(carousel).carousel(LOGIN_SLIDE);
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     $(carousel).carousel('pause');
@@ -89,10 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         $(carousel).carousel(REGISTER_SLIDE);
     });
 
-    registerBackButton.addEventListener('click', e => {
-        e.preventDefault();
-        $(carousel).carousel(LOGIN_SLIDE);
-    });
+    registerBackButton.addEventListener('click', backButton);
+    telegramBackButton.addEventListener('click', backButton);
 });
 
 function showAlert(message, type) {
