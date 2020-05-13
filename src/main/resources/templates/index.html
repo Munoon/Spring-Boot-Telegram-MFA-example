@@ -25,7 +25,7 @@
                     <div class="mt-3" th:if="${!useTelegram}" th:with="botName = ${@telegramBot.getBotUsername()}">
                         <hr>
                         <span>
-                            Для подключения Telegram аккауета откройте бота
+                            Для подключения Telegram аккаунта, откройте бота
                             <a th:href="${'https://t.me/' + botName}">@[[${botName}]]</a>,
                             запустите его командой <b>/start</b> и введите команду
                             <b>/connect [[${#authentication.principal.user.username}]]</b>.
