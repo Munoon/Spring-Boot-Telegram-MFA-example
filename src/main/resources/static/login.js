@@ -101,3 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function showAlert(message, type) {
     alertDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
 }
+
+function typeForm(login, password) {
+    loginForm.querySelector('input[name="username"]').value = login;
+    loginForm.querySelector('input[name="password"]').value = password;
+}
