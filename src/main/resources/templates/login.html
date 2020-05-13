@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
-                <div class="card-body">
+                <div class="card-body" id="loginModal">
                     <div id="alertDiv">
                         <div class="alert alert-danger" role="alert" th:if="${param.error}">Неправильный логин или пароль</div>
                         <div class="alert alert-success" role="alert" th:if="${param.logout}">Вы успешно вышли из аккаунта!</div>
@@ -73,6 +73,13 @@
                             <div class="carousel-item">
                                 <h5 class="card-title text-center">Подтвердите вход в телеграм</h5>
                             </div>
+                        </div>
+                    </div>
+                    <div class="fullscreen-loading">
+                        <div class="spinner">
+                            <div class="rect1"></div>
+                            <div class="rect2"></div>
+                            <div class="rect3"></div>
                         </div>
                     </div>
                 </div>

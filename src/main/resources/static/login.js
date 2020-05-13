@@ -4,6 +4,7 @@ const carousel = document.getElementById('carousel');
 const alertDiv = document.getElementById('alertDiv');
 const loginForm = document.getElementById('loginForm');
 const registerBackButton = document.getElementById('registerBackButton');
+const loginModal = document.getElementById('loginModal');
 const LOGIN_SLIDE = 0,
     REGISTER_SLIDE = 1,
     TELEGRAM_SLIDE = 2;
@@ -11,6 +12,11 @@ const LOGIN_SLIDE = 0,
 document.addEventListener('DOMContentLoaded', () => {
     $(carousel).carousel('pause');
     $(carousel).on('slide.bs.carousel', () => alertDiv.innerHTML = '');
+
+    $.ajaxSetup({
+        beforeSend: () => loginModal.classList.add('fullscreen-loading-modal'),
+        complete: () => loginModal.classList.remove('fullscreen-loading-modal')
+    });
 
     let socket = new SockJS('/websocket');
     let stompClient = Stomp.over(socket);
@@ -26,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let info = JSON.parse(data.body);
 
             if (info.success) {
+                loginModal.classList.add('fullscreen-loading-modal');
                 location.href = info.redirectUrl;
             } else {
                 loginForm.querySelector('input[name="password"]').value = '';
@@ -51,7 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginForm.querySelector('input[name="password"]').value = '';
                 }
             }
-        }).done(response => location.href = response.redirectUrl);
+        }).done(response => {
+            loginModal.classList.add('fullscreen-loading-modal');
+            location.href = response.redirectUrl;
+        });
     });
 
     registerForm.addEventListener('submit', e => {
