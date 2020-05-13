@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class TelegramBot extends TelegramLongPollingCommandBot {
@@ -25,10 +28,13 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         this.mfaCommand = mfaCommand;
         this.botUsername = getMe().getUserName();
 
+        register(connectAccountCommand);
+    }
+
+    @PostConstruct
+    public void addBot() throws TelegramApiRequestException {
         TelegramBotsApi botsApi = new TelegramBotsApi();
         botsApi.registerBot(this);
-
-        register(connectAccountCommand);
     }
 
     @Override
