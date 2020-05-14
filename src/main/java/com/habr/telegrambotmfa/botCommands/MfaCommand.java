@@ -59,8 +59,7 @@ public class MfaCommand {
         sendUserMessage(user);
     }
 
-    public void onCallbackQuery(Update update) {
-        CallbackQuery callbackQuery = update.getCallbackQuery();
+    public void onCallbackQuery(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         AuthInfo authInfo = connectingUser.remove(message.getChatId());
 

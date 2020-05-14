@@ -21,7 +21,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         HttpServletRequest request = ((CustomWebAuthenticationDetails) authentication.getDetails()).getRequest();
-        AuthorizedUser authUser = (AuthorizedUser) getUserDetailsService().loadUserByUsername((String) authentication.getPrincipal());
+        AuthorizedUser authUser = (AuthorizedUser) userDetails;
         User user = authUser.getUser();
 
         if (user.getTelegramChatId() != null) {
