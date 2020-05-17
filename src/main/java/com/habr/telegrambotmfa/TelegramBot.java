@@ -40,7 +40,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     @Override
     public void processNonCommandUpdate(Update update) {
         if (update.hasCallbackQuery()) {
-            mfaCommand.onCallbackQuery(update);
+            mfaCommand.onCallbackQuery(update.getCallbackQuery());
         }
     }
 
