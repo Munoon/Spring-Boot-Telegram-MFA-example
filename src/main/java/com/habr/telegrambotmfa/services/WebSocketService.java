@@ -19,6 +19,9 @@ public class WebSocketService {
 
     public void sendLoginStatus(AuthenticationInfo info, String csrf) {
         String sessionId = sessionStorage.getSessionId(csrf);
+        if (info.isSuccess()) {
+            sessionStorage.removeSession(csrf);
+        }
 
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);

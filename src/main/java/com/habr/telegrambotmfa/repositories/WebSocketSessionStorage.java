@@ -24,6 +24,10 @@ public class WebSocketSessionStorage  implements ApplicationListener<SessionConn
     }
 
     public String getSessionId(String csrf) {
-        return storage.remove(csrf);
+        return storage.get(csrf);
+    }
+
+    public void removeSession(String csrf) {
+        storage.remove(csrf);
     }
 }
