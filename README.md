@@ -2,6 +2,8 @@
 Приложение, написанное на Spring Boot, показывает пример реализации функции "Подтверждение авторизации с помощью Telegram"
 
 [YouTube DEMO](https://www.youtube.com/watch?v=7WucYd0-gPE)
+•
+[Статья на Habr](https://habr.com/ru/post/501728/)
 
 ## Запуск
 1. Для запуска вам понадобиться Java 11 и Maven.
