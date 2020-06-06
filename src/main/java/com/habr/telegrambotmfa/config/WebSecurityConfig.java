@@ -1,6 +1,6 @@
 package com.habr.telegrambotmfa.config;
 
-import com.habr.telegrambotmfa.botCommands.MfaCommand;
+import com.habr.telegrambotmfa.login.MfaCommand;
 import com.habr.telegrambotmfa.login.CustomAuthenticationProvider;
 import com.habr.telegrambotmfa.login.CustomFailureHandler;
 import com.habr.telegrambotmfa.login.CustomSuccessHandler;

@@ -1,9 +1,7 @@
-package com.habr.telegrambotmfa.botCommands;
+package com.habr.telegrambotmfa.login;
 
 import com.habr.telegrambotmfa.AuthorizedUser;
 import com.habr.telegrambotmfa.TelegramBot;
-import com.habr.telegrambotmfa.login.AuthenticationInfo;
-import com.habr.telegrambotmfa.login.CustomSuccessHandler;
 import com.habr.telegrambotmfa.models.User;
 import com.habr.telegrambotmfa.services.WebSocketService;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;

@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE User u SET u.telegramChatId = ?2 WHERE u.username = ?1")
-    void connectBot(String username, Long chatId);
+    @Query("UPDATE User u SET u.telegramChatId = ?2 WHERE u.id = ?1")
+    void connectBot(int userId, Long chatId);
 }

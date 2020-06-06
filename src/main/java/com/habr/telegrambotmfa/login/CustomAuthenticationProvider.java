@@ -1,7 +1,6 @@
 package com.habr.telegrambotmfa.login;
 
 import com.habr.telegrambotmfa.AuthorizedUser;
-import com.habr.telegrambotmfa.botCommands.MfaCommand;
 import com.habr.telegrambotmfa.models.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

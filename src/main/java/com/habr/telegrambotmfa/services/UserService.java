@@ -24,10 +24,6 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void connectBot(String username, Long chatId) {
-        userRepository.connectBot(username, chatId);
-    }
-
     public User create(User user) {
         user.setId(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

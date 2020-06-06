@@ -1,7 +1,7 @@
 package com.habr.telegrambotmfa;
 
-import com.habr.telegrambotmfa.botCommands.ConnectAccountCommand;
-import com.habr.telegrambotmfa.botCommands.MfaCommand;
+import com.habr.telegrambotmfa.login.MfaCommand;
+import com.habr.telegrambotmfa.repositories.ConnectTelegramRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -21,14 +21,14 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     private MfaCommand mfaCommand;
     private String botUsername;
     private String botToken;
+    private ConnectTelegramRepository connectTelegramRepository;
 
-    public TelegramBot(Environment env, ConnectAccountCommand connectAccountCommand, @Lazy MfaCommand mfaCommand) throws TelegramApiException {
+    public TelegramBot(Environment env, @Lazy MfaCommand mfaCommand, ConnectTelegramRepository connectTelegramRepository) throws TelegramApiException {
         super(ApiContext.getInstance(DefaultBotOptions.class), false);
         this.botToken = env.getRequiredProperty("telegram.bot.token");
         this.mfaCommand = mfaCommand;
         this.botUsername = getMe().getUserName();
-
-        register(connectAccountCommand);
+        this.connectTelegramRepository = connectTelegramRepository;
     }
 
     @PostConstruct
@@ -41,6 +41,11 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     public void processNonCommandUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             mfaCommand.onCallbackQuery(update.getCallbackQuery());
+        } else if (update.hasMessage()) {
+            var message = update.getMessage();
+            var telegramUserId = message.getFrom().getId();
+            var chatId = message.getChatId();
+            connectTelegramRepository.register(telegramUserId, chatId);
         }
     }
 
