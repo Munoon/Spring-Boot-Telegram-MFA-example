@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -Dspring.profiles.active="heroku" -Dserver.port=$PORT target/telegram-bot-mfa.jar
+web:    java $JAVA_OPTS -Dspring.profiles.active="heroku" -Dserver.port=$PORT target/*.jar
