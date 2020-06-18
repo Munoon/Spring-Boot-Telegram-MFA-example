@@ -49,13 +49,6 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
 
-        <!-- DATABASE -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- TELEGRAM -->
         <dependency>
             <groupId>org.telegram</groupId>
@@ -104,7 +97,35 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>heroku</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-jdbc</artifactId>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>development</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
+        <finalName>telegram-bot-mfa</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
